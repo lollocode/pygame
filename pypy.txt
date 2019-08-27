@@ -1,0 +1,37 @@
+Sale Pepe
+
+from random import randint
+
+print("Benvenuto nel programma, Fortunello")
+ampiezza = int(input("Quante persone ci sono?: " ))
+mioNumero = int(input("che numero sei tu?: "))
+numeroEstratto = int(randint(1, ampiezza))
+print("Il numero vincitore è ", numeroEstratto)
+
+if mioNumero == numeroEstratto :
+  print("Hai vinto!!!")
+
+
+else :
+  print("Sarai più fortunato")
+  mioNumero2 = int(input("che numero sei tu?: "))
+  numeroEstratto2 = int(randint(1, ampiezza))
+  print("Il numero vincitore è ", numeroEstratto2)
+
+
+  if mioNumero2 == numeroEstratto2 :
+    print("Hai vinto!!!")
+
+  else :
+    mioNumero3 = int(input("che numero sei tu?: "))
+    numeroEstratto3 = int(randint(1, ampiezza))
+    print("Il numero vincitore è ", numeroEstratto3)
+
+    if mioNumero3 == numeroEstratto3 :
+      print("Hai vinto!!!")
+
+    else :
+      print("Sarai più fortunato")
+input()
+ 
+  
