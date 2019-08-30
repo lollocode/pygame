@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((screen_x, screen_y))
 
 pygame.display.set_caption("First Pygame Application")
 back = pygame.image.load("./space.png")
-play = pygame.image.load("./player.png")
+play = pygame.image.load("./starship.png")
 bull = pygame.image.load("./bullet.png")
 enem = pygame.image.load("./enemy.png")
 points = 0
