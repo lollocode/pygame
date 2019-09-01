@@ -18,7 +18,7 @@ screen = pygame.display.set_mode((screen_x, screen_y))
 pygame.display.set_caption("First Pygame Application")
 back1 = pygame.image.load("./space1.png")
 
-play = pygame.image.load("./starship.png")
+play = pygame.image.load("./starship1.png")
 bull = pygame.image.load("./bullet.png")
 enem = pygame.image.load("./enemy.png")
 points = 0
@@ -31,11 +31,12 @@ enemy = []
 
 
 pygame.font.init()
-myfont = pygame.font.SysFont('arial', 20)
+myfont = pygame.font.SysFont('arcade classic', 23)
 
-start_time = datetime.datetime.now()
-
+start_time = 0
+elapsed_time = 0
 def scritte():
+
     screen.fill([0,0,0])
     elapsed_time = datetime.datetime.now() - start_time
     textsurface = myfont.render("Tempo trascorso  "+str(elapsed_time), True, (255, 0, 0))
@@ -46,10 +47,61 @@ def scritte():
     screen.blit(punti,(300,0))
     screen.blit(livello,(500,0))
 
-class Enemy:
+class Entity:
     def __init__(self,x,y):
         self.x = x
         self.y = y
+
+class Bullet(Entity):
+    def __init__(self,x,y,start):
+        self.start = start
+        super().__init__(x,y)
+
+    def move(self):
+        self.y -= 15*level
+        if self.y < 0:
+            self.y = py-20
+            self.start = self.x
+
+
+
+class Enemy(Entity):
+    def __init__(self,x,y):
+        super().__init__(x,y)
+
+def write(bol):
+    global running
+    scritta = 0
+    screen.fill([0,0,0])
+    pres = pygame.mouse.get_pressed()
+    if bol == False:
+        scritta = pygame.image.load("./gameover.png")    
+    else: 
+        scritta = pygame.image.load("./win.png") 
+    screen.blit(scritta,(0,0 ))
+    if pres[2] == 1:
+        running = False
+    
+
+
+
+
+def lose():    
+    write(False)
+    
+
+def win():
+    write(True)
+
+
+def init():
+    for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+    
+    clock = pygame.time.Clock()
+    clock.tick(60)
+    pygame.display.update()
 
 def generator(n):
     opt.clear()
@@ -59,73 +111,106 @@ def generator(n):
 def seeder(n):
     generator(n)
     enemy.clear()
+    n = len(opt)+1
     for i in opt:
-        i = Enemy(int(i[1])*100,ey)
+        i = Enemy((screen_x-elato)/n+int(i[1])*120,ey)
         enemy.append(i)
 def draw():
     for i in enemy:
         screen.blit(enem,(i.x,i.y))
 
 def move():
-    global by
-    global ey,ex,points,speed
-    by -= 10*level
-    if by < 0:
-        by = py-20
+    global ey,ex,points,speed,game,running
     for i in enemy:
-        i.y += speed/2
+        i.y += (speed*level/3)/2
         if points >= speed*5:
             speed += 1
         if i.y > screen_y:
-            print("hai perso")
-            sys.exit()
+            game = False
+            i.y = 20
 
 def change(n):
     global back1,play
     play = pygame.image.load("./starship"+str(n)+".png")
     back1 = pygame.image.load("./space"+str(n)+".png")
-    
 
 
+def choose():
+    global running, start_time,game 
+    titolo = pygame.image.load("titolo.png")
+    screen.blit(titolo,(0,0))
+    pres = pygame.mouse.get_pressed()
+    if pres[0] == 1:
+        start_time = datetime.datetime.now()
+        running = True
+        game = True
 
-e = Enemy(0,40)
+
+def end(suca):
+    global level, points
+    level = 1
+    points = 0
+    change(level)
+    if suca == True:
+        win()
+    else:
+        lose()
+
+
+b = Bullet(bx,by,bx)
+e = Enemy((screen_x-elato)/2,40)
 enemy.append(e)
-
+game = True
+running = False
+x = False
 while True:
-    if points == 15:
-        level += 1
-        points = 0
-        seeder(level)
-        change(level)
-    scritte()
-    
-    screen.blit(play,(px,py))
-    screen.blit(bull,(bx,by))
-    draw()
-    move()
-    for i in enemy:
-        if (bx +blato >= i.x and bx <= i.x+elato) and (by >= i.y and by  <= i.y+elato):
-            i.y = 20
-            i.x = randint(0,9)*elato
-            points += 1
-    for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-                    by -= plato
-                    py -= plato
-                if event.key == pygame.K_s and py < screen_y-plato:
-                    by += plato
-                    py += plato
-                   
-                if event.key == pygame.K_a and px > 0:
-                    bx -= plato
-                    px -= plato
+    init()
+    choose()
+    while running:
+        init()
+        end(x)
+        while game:
+            if level == 3 and points == 1:
+                level = 1
+                points = 0
+                game = False
+                x = True
+            if points == 15:
+                level += 1
+                points = 0
+                seeder(level)
+                change(level)
 
-                if event.key == pygame.K_d and px+plato < screen_x:
-                    bx += plato
-                    px += plato
-    clock = pygame.time.Clock()
-    clock.tick(60)
-    pygame.display.update()
+            scritte()
+            
+            screen.blit(play,(px,py))
+            screen.blit(bull,(b.start,b.y))
+            b.move()
+            draw()
+            move()
+            for i in enemy:
+                if (b.start +blato >= i.x and b.start <= i.x+elato) and (b.y >= i.y and b.y  <= i.y+elato):
+                    i.y = 20.
+                    i.x = randint(0,9)*elato
+                    points += 1
+            for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_w:
+                            b.y -= plato
+                            py -= plato
+                        if event.key == pygame.K_s and py < screen_y-plato:
+                            b.y += plato
+                            py += plato
+                           
+                        if event.key == pygame.K_a and px > 0:
+                            b.x -= plato
+                            px -= plato
+
+                        if event.key == pygame.K_d and px+plato < screen_x:
+                            b.x += plato
+                            px += plato
+            clock = pygame.time.Clock()
+            clock.tick(60)
+            pygame.display.update()
