@@ -1,0 +1,25 @@
+{
+  "name": "pumi",
+  "version": "1.0.0",
+  "description": "SEI GAY",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/P-u-m-i/Pumi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/P-u-m-i/Pumi/issues"
+  },
+  "homepage": "https://github.com/P-u-m-i/Pumi#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "mysql": "^2.17.1",
+    "path": "^0.12.7",
+    "simple-argv": "^2.0.2"
+  }
+}

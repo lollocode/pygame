@@ -1,0 +1,12 @@
+/.temp
+/.tmp
+/build
+/dist
+/node_modules
+.package.swp
+db-config.json
+node_modules
+build
+npm-debug.log
+.env
+.DS_Store
