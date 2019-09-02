@@ -16,11 +16,11 @@ plato = 40
 screen = pygame.display.set_mode((screen_x, screen_y))
 
 pygame.display.set_caption("First Pygame Application")
-back1 = pygame.image.load("./space1.png")
+back1 = pygame.image.load("./images/space1.png")
 
-play = pygame.image.load("./starship1.png")
-bull = pygame.image.load("./bullet.png")
-enem = pygame.image.load("./enemy.png")
+play = pygame.image.load("./images/starship1.png")
+bull = pygame.image.load("./images/bullet.png")
+enem = pygame.image.load("./images/enemy.png")
 points = 0
 level = 1
 speed = 1
@@ -75,9 +75,9 @@ def write(bol):
     screen.fill([0,0,0])
     pres = pygame.mouse.get_pressed()
     if bol == False:
-        scritta = pygame.image.load("./gameover.png")    
+        scritta = pygame.image.load("./images/gameover.png")    
     else: 
-        scritta = pygame.image.load("./win.png") 
+        scritta = pygame.image.load("./images/win.png") 
     screen.blit(scritta,(0,0 ))
     if pres[2] == 1:
         running = False
@@ -131,13 +131,13 @@ def move():
 
 def change(n):
     global back1,play
-    play = pygame.image.load("./starship"+str(n)+".png")
-    back1 = pygame.image.load("./space"+str(n)+".png")
+    play = pygame.image.load("./images/starship"+str(n)+".png")
+    back1 = pygame.image.load("./images/space"+str(n)+".png")
 
 
 def choose():
     global running, start_time,game 
-    titolo = pygame.image.load("titolo.png")
+    titolo = pygame.image.load("./images/titolo.png")
     screen.blit(titolo,(0,0))
     pres = pygame.mouse.get_pressed()
     if pres[0] == 1:
