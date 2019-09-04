@@ -1,4 +1,4 @@
-import pygame, sys, time, datetime
+import pygame, sys, time, datetime, mysql.connector
 from random import randint
 
 pygame.init()
@@ -25,6 +25,8 @@ points = 0
 level = 1
 speed = 1
 
+
+text = ""
 
 opt = ["e0"]
 enemy = []
@@ -96,7 +98,7 @@ def win():
 
 def init():
     for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT:
                     sys.exit()
     
     clock = pygame.time.Clock()
@@ -136,14 +138,34 @@ def change(n):
 
 
 def choose():
-    global running, start_time,game 
+    global running, start_time,game, text
     titolo = pygame.image.load("./images/titolo.png")
     screen.blit(titolo,(0,0))
     pres = pygame.mouse.get_pressed()
+    prova = True
     if pres[0] == 1:
-        start_time = datetime.datetime.now()
-        running = True
-        game = True
+        while prova:
+            init()
+            screen.fill([0,0,0])
+            font = pygame.font.Font('freesansbold.ttf', 32) 
+            testo = font.render(text, True, [255,255,255])
+            pygame.draw.rect(screen,[255,255,255],(150,200,300,100))
+            pygame.draw.rect(screen,[0,0,0],(160,210,280,80))
+            screen.blit(testo,(160,230))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        start_time = datetime.datetime.now()
+                        running = True
+                        game = True
+                        prova = False;
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+
 
 
 def end(suca):
