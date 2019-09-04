@@ -1,4 +1,6 @@
-import pygame, sys, time, datetime, mysql.connector
+import pygame, sys, time, datetime
+import mysql.connector
+from connection import *
 from random import randint
 
 pygame.init()
@@ -27,6 +29,7 @@ speed = 1
 
 
 text = ""
+sql = "INSERT INTO Users (username,livello,score,tempo) VALUES (%s,%s,%s,%s )"
 
 opt = ["e0"]
 enemy = []
@@ -34,11 +37,12 @@ enemy = []
 
 pygame.font.init()
 myfont = pygame.font.SysFont('arcade classic', 23)
+myfont2 = pygame.font.SysFont('arcade classic', 45)
 
 start_time = 0
 elapsed_time = 0
 def scritte():
-
+    global elapsed_time
     screen.fill([0,0,0])
     elapsed_time = datetime.datetime.now() - start_time
     textsurface = myfont.render("Tempo trascorso  "+str(elapsed_time), True, (255, 0, 0))
@@ -72,9 +76,17 @@ class Enemy(Entity):
         super().__init__(x,y)
 
 def write(bol):
-    global running
+    global running,level,points,elapsed_time, text
     scritta = 0
     screen.fill([0,0,0])
+    if(elapsed_time != 0):
+        val = [text,level,points,elapsed_time]
+        mycursor.execute(sql,val)
+        mydb.commit()
+        print(mycursor.rowcount, "record inserted.")
+    
+    elapsed_time = 0
+
     pres = pygame.mouse.get_pressed()
     if bol == False:
         scritta = pygame.image.load("./images/gameover.png")    
@@ -83,6 +95,9 @@ def write(bol):
     screen.blit(scritta,(0,0 ))
     if pres[2] == 1:
         running = False
+        text = ""
+        level = 1
+        points = 0
     
 
 
@@ -137,6 +152,22 @@ def change(n):
     back1 = pygame.image.load("./images/space"+str(n)+".png")
 
 
+def classifica():
+    while True:
+        init()
+        i = 0
+        screen.blit(back1,(0,0))
+        titolo = myfont2.render("CLASSIFICA:", False,[255,255,255])
+        screen.blit(titolo,(220,50))
+        mycursor.execute("select * from Users ORDER BY livello DESC ;")
+        res = mycursor.fetchall()
+        for x in res:
+            data = str(i+1)+16*" "+x[1]+(20-len(x[1]))*" "+str(x[2])+16*" "+str(x[3])+16*" "+str(x[4])
+            row = myfont.render(data ,False, [255,255,255])
+            screen.blit(row,(80,(i*50)+100))
+            i+=1
+
+
 def choose():
     global running, start_time,game, text
     titolo = pygame.image.load("./images/titolo.png")
@@ -146,21 +177,30 @@ def choose():
     if pres[0] == 1:
         while prova:
             init()
-            screen.fill([0,0,0])
+            click = pygame.mouse.get_pressed()
+            pos = pygame.mouse.get_pos()
+            screen.blit(back1,(0,0))
             font = pygame.font.Font('freesansbold.ttf', 32) 
-            testo = font.render(text, True, [255,255,255])
-            pygame.draw.rect(screen,[255,255,255],(150,200,300,100))
-            pygame.draw.rect(screen,[0,0,0],(160,210,280,80))
+            testo = font.render(text, False, [255,255,255])
+            pygame.draw.rect(screen,[0.4,25.9,38.4],(150,150,300,100))
+            pygame.draw.rect(screen,[0,5.1,12.5],(160,160,280,80))
             screen.blit(testo,(160,230))
+            pygame.draw.rect(screen,[1.6,20.4,29],(160,350,280,5))
+            clas = font.render("Classifica",False,(255,255,255))
+            screen.blit(clas,(210,320))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pos[0] >= 210 and pos[0] <=300 and pos[1] >= 320 and pos[1] < 350:
+                        classifica();
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         start_time = datetime.datetime.now()
                         running = True
                         game = True
                         prova = False;
+                        classifica()
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     else:
@@ -169,9 +209,6 @@ def choose():
 
 
 def end(suca):
-    global level, points
-    level = 1
-    points = 0
     change(level)
     if suca == True:
         win()
@@ -191,10 +228,9 @@ while True:
     while running:
         init()
         end(x)
+        change(level)
         while game:
             if level == 3 and points == 1:
-                level = 1
-                points = 0
                 game = False
                 x = True
             if points == 15:

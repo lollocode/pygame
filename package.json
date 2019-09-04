@@ -19,6 +19,7 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "mysql": "^2.17.1",
+    "npm": "^6.11.3",
     "path": "^0.12.7",
     "simple-argv": "^2.0.2"
   }
