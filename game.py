@@ -23,6 +23,7 @@ back1 = pygame.image.load("./images/space1.png")
 play = pygame.image.load("./images/starship1.png")
 bull = pygame.image.load("./images/bullet.png")
 enem = pygame.image.load("./images/enemy.png")
+back_classifica = pygame.image.load("./images/classifica.png")
 points = 0
 level = 1
 speed = 1
@@ -33,7 +34,7 @@ sql = "INSERT INTO Users (username,livello,score,tempo) VALUES (%s,%s,%s,%s )"
 
 opt = ["e0"]
 enemy = []
-
+rank = True
 
 pygame.font.init()
 myfont = pygame.font.SysFont('arcade classic', 23)
@@ -153,10 +154,16 @@ def change(n):
 
 
 def classifica():
-    while True:
+    global rank
+    while rank:
         init()
         i = 0
-        screen.blit(back1,(0,0))
+        pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pos[0] >= 33 and pos[0] <=73 and pos[1] >= 33 and pos[1] < 73:
+                        rank = False;
+        screen.blit(back_classifica,(0,0))
         titolo = myfont2.render("CLASSIFICA:", False,[255,255,255])
         screen.blit(titolo,(220,50))
         mycursor.execute("select * from Users ORDER BY livello DESC ;")
@@ -169,7 +176,7 @@ def classifica():
 
 
 def choose():
-    global running, start_time,game, text
+    global running, start_time,game, text,rank
     titolo = pygame.image.load("./images/titolo.png")
     screen.blit(titolo,(0,0))
     pres = pygame.mouse.get_pressed()
@@ -182,9 +189,11 @@ def choose():
             screen.blit(back1,(0,0))
             font = pygame.font.Font('freesansbold.ttf', 32) 
             testo = font.render(text, False, [255,255,255])
+            test = font.render("inserisci il tuo nome utente",False,[255,255,255])
+            screen.blit(test,(100,50))
             pygame.draw.rect(screen,[0.4,25.9,38.4],(150,150,300,100))
             pygame.draw.rect(screen,[0,5.1,12.5],(160,160,280,80))
-            screen.blit(testo,(160,230))
+            screen.blit(testo,(170,180))
             pygame.draw.rect(screen,[1.6,20.4,29],(160,350,280,5))
             clas = font.render("Classifica",False,(255,255,255))
             screen.blit(clas,(210,320))
@@ -193,6 +202,7 @@ def choose():
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pos[0] >= 210 and pos[0] <=300 and pos[1] >= 320 and pos[1] < 350:
+                        rank = True
                         classifica();
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
